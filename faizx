@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Pengawasan Kamera</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+</head>
+<body>
+  <h1>Aplikasi Pengawasan Kamera</h1>
+  <button id="sendImageButton">Hantar Gambar</button>
+  <div id="imageDisplay"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+}
+
+#sendImageButton {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+#imageDisplay {
+  margin-top: 20px;
+}
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database(app);
+
+// Simulasi menghantar gambar
+document.getElementById('sendImageButton').addEventListener('click', () => {
+  const imageUrl = "https://example.com/image.jpg"; // Gantikan dengan URL gambar sebenar
+  sendImageToFirebase(imageUrl);
+});
+
+// Hantar gambar ke Firebase
+function sendImageToFirebase(imageUrl) {
+  const imageRef = database.ref('cameraFeed');
+  imageRef.set(imageUrl); // Set gambar URL di Firebase
+}
+
+// Dapatkan gambar dari Firebase dan paparkan
+const imageRef = database.ref('cameraFeed');
+imageRef.on('value', (snapshot) => {
+  const imageUrl = snapshot.val();
+  if (imageUrl) {
+    document.getElementById('imageDisplay').innerHTML = `<img src="${imageUrl}" alt="Camera Feed" width="300">`;
+  }
+});
